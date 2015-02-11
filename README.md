@@ -1,14 +1,14 @@
-# jquery.cookie-integration
+# jquery cookieIntegration
 
-A simple jQuery plugin for integrating cookies into web pages.
+A simple jQuery plugin that helps you integrate cookies into web pages.
 
 ## Dependencies
 
-This plugin requires the following jQuery plugin to work!:
+This plugin requires the following jQuery plugin to work!
 
 [jquery-cookie](https://github.com/carhartl/jquery-cookie/blob/master/README.md)
 
-Please install this plugin first.
+Please install this plugin first. (It handles the behind the scenes creation and updating of cookies.)
 
 ## Installation
 
@@ -147,6 +147,7 @@ cookieDuration: '30',
 ```
 
 (From the jquery.cookie docs)
+
 "Define lifetime of the cookie. Value can be a `Number` which will be interpreted as days from time of creation or a `Date` object. If omitted, the cookie becomes a session cookie."
 
 ex.
@@ -157,6 +158,7 @@ cookieDuration: '14',
 ### cookiePath
 
 (From the jquery.cookie docs)
+
 "Define the path where the cookie is valid. *By default the path of the cookie is the path of the page where the cookie was created (standard browser behavior).* If you want to make it available for instance across the entire domain use `path: '/'`. Default: path of page where the cookie was created."
 
 ex.
@@ -168,9 +170,3 @@ cookiePath: '/part-of-the-site-where-language-setting-matters/',
 ```
 cookiePath: '/',
 ```
-
-controlSelector:         'a.cookie-control',
-					controlCookieAttr:       'data-cookie',
-					controlCookieValueAttr:  'data-cookie-value',
-					cookieDuration:          30,					// 30 days
-					cookiePath:              '/',					// the entire site
