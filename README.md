@@ -52,7 +52,7 @@ Example Javascript:
 
 ```javascript
 jQuery(document).ready(function($) {
-	$(".cookie").cookieControl({
+	$(".cookie").cookieIntegration({
 		cookie:        'color',
 		defaultValue:  'red',
 		cookieValues:  ['blue', 'yellow'],
