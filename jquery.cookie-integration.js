@@ -25,7 +25,7 @@
 		// CHECK ARGUMENTS //
 		/////////////////////
 
-		// cookie and cookieOptions must be set
+		// cookie must be set
 		if (!options.cookie) 
 			throw new Error('Plugin initialization failed: cookie option not set.');
 
@@ -38,13 +38,14 @@
 					cookieValues:            [],
 					defaultValue:            '',					// optional
 					controlSelector:         'a.cookie-control',
-					controlCookieAttr:       'data-cookie',
-					controlCookieValueAttr:  'data-cookie-value',
+					cookieActionAttr:        'data-cookie-action',
+					cookieNameAttr:          'data-cookie-name',
+					cookieValueAttr:         'data-cookie-value',
 					cookieDuration:          30,					// 30 days
 					cookiePath:              '/',					// the entire site
 				}, options ),
 			state = {
-					cookieValue:             '',
+					cookieValue:             null,
 				},
 			that = this;
 
@@ -83,6 +84,8 @@
 		}
 
 		function deleteCookie(name) {
+			state.cookieValue = null;
+			updateClass();
 			return $.removeCookie(name, { path: settings.cookiePath });
 			// the path setting here must be the same as what the cookie was written with
 		}
@@ -91,24 +94,57 @@
 			return setCookie(name, getCookie(name), true);
 		}
 
+		function resetCookie(name) {
+			var defaultValue = settings.defaultValue;
+			
+			if (defaultValue) {
+				return setCookie(name, defaultValue, true);
+			} else
+				return deleteCookie(name);
+		}
+
 		///////////////////////
 		// CONTROL FUNCTIONS //
 		///////////////////////
 
-		function selectCookie(e) {
+		function setHandler(e) {
 			// extract cookie name and value
-			var name = $(this).attr(settings.controlCookieAttr),
-				value = $(this).attr(settings.controlCookieValueAttr),
+			var name = $(this).attr(settings.cookieNameAttr),
+				value = $(this).attr(settings.cookieValueAttr),
 				result;
 
 			if (!name) 
-				throw new Error('Select cookie failed: cookie name not defined.');
+				throw new Error('Set cookie failed: cookie name undefined.');
 			if (!value)	
-				throw new Error('Select cookie failed: cookie value not defined.');
+				throw new Error('Set cookie failed: cookie value undefined.');
 
 			result = setCookie(name, value);
 			if (!result) 
-				throw new Error('Select cookie failed: set operation failed.');
+				throw new Error('Set cookie failed: set operation failed.');
+
+			return result;
+		}
+
+		function resetHandler(e) {
+			// extract cookie name
+			var name = $(this).attr(settings.cookieNameAttr),
+				result;
+
+			result = resetCookie(name);
+			if (!result) 
+				throw new Error('Reset cookie failed: reset operation failed.');
+
+			return result;
+		}
+
+		function deleteHandler(e) {
+			// extract cookie name
+			var name = $(this).attr(settings.cookieNameAttr),
+				result;
+
+			result = deleteCookie(name);
+			if (!result) 
+				throw new Error('Delete cookie failed: delete operation failed.');
 
 			return result;
 		}
@@ -139,7 +175,8 @@
 
 		function init() {
 			var name = settings.cookie,
-				defaultValue = settings.defaultValue;
+				defaultValue = settings.defaultValue,
+				selector = settings.controlSelector;
 
 			that.addClass('cookie-' + name);
 
@@ -157,14 +194,30 @@
 			}
 
 			// add click listeners to cookie controllers...
-			$(settings.controlSelector).each(function() {
-				var ctrlName = $(this).attr(settings.controlCookieAttr);
+			$(selector).each(function() {
+				var ctrlAction = $(this).attr(settings.cookieActionAttr),
+					ctrlName = $(this).attr(settings.cookieNameAttr);
 
 				// ...if they have the corresponding cookie name
 				if (name === ctrlName) {
-					$(this).addClass('listening');
-					$(this).click(selectCookie);
-				}
+					switch (ctrlAction) {
+						case 'set':
+							$(this).addClass('listening');
+							$(this).click(setHandler);
+							break;
+						case 'reset':
+							$(this).addClass('listening');
+							$(this).click(resetHandler);
+							break;
+						case 'delete':
+							$(this).addClass('listening');
+							$(this).click(deleteHandler);
+							break;
+						default:
+							console.log('Warning: Cookie control initialization failed: cookie action invalid or undefined.');
+					}
+				} else 
+					console.log('Warning: Cookie control initialization failed: cookie name invalid or undefined.');
 			});
 		}
 

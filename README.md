@@ -2,6 +2,10 @@
 
 A simple jQuery plugin that helps you integrate cookies into web pages.
 
+## WARNING
+
+This readme needs to be updated.
+
 ## Dependencies
 
 This plugin requires the following jQuery plugin to work!
