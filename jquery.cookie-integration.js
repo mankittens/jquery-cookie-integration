@@ -58,7 +58,9 @@
 
 		function setCookie(name, value, skipValueCheck) {
 			var currName = settings.cookie,
-				values = settings.cookieValues;
+				values = settings.cookieValues,
+				duration = settings.cookieDuration,
+				path = settings.cookiePath;
 
 			// set the cookie if it's the one we're dealing AND
 			// either the value is among the predefine values OR
@@ -70,7 +72,7 @@
 					state.cookieValue = value; // no check for same; would block refreshes
 					updateClass();
 					// create a cookie that lasts for 30 days (default) and is good on the entire site (default)
-					return $.cookie(name, value, { expires: cookieDuration, path: cookiePath });
+					return $.cookie(name, value, { expires: duration, path: path });
 
 				} else 
 					throw new Error('Set cookie failed: value not within list of values.');
@@ -81,7 +83,7 @@
 		}
 
 		function deleteCookie(name) {
-			return $.removeCookie(name, { path: cookiePath });
+			return $.removeCookie(name, { path: settings.cookiePath });
 			// the path setting here must be the same as what the cookie was written with
 		}
 
@@ -123,7 +125,8 @@
 
 			// add appropriate classes
 			if (value) {
-				value === defaultValue && that.addClass('default');
+				if (value === defaultValue) 
+					that.addClass('default-value');
 				that.addClass('value-' + value);
 			} else {
 				that.addClass('value-not-set');
@@ -136,8 +139,7 @@
 
 		function init() {
 			var name = settings.cookie,
-				defaultValue = settings.defaultValue,
-				value;
+				defaultValue = settings.defaultValue;
 
 			that.addClass('cookie-' + name);
 
@@ -154,13 +156,16 @@
 				updateClass();
 			}
 
-			// throw listeners on any cookie controllers
-			// TODO: break this out?
+			// add click listeners to cookie controllers...
 			$(settings.controlSelector).each(function() {
-				$(this).addClass('listening');
-				$(this).click(selectCookie);
-			});
+				var ctrlName = $(this).attr(settings.controlCookieAttr);
 
+				// ...if they have the corresponding cookie name
+				if (name === ctrlName) {
+					$(this).addClass('listening');
+					$(this).click(selectCookie);
+				}
+			});
 		}
 
 		//////////
