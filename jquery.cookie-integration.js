@@ -19,7 +19,7 @@
 	if(!$.cookie) 
 		throw new Error('Plugin initialization failed: jquery.cookie dependency does not exist.');
 
-	$.fn.cookieControl = function(options) {
+	$.fn.cookieIntegration = function(options) {
 
 		/////////////////////
 		// CHECK ARGUMENTS //
