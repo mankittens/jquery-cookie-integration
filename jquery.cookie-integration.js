@@ -118,7 +118,7 @@
 				defaultValue = settings.defaultValue;
 
 			// remove existing classes
-			that.removeClass('default');
+			that.removeClass('default-value');
 			that.removeClass(function (index, css) {
 				return (css.match (/(^|\s)value-\S+/g) || []).join(' ');
 			});
